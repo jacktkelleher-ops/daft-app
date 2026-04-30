@@ -38,7 +38,7 @@ def generate_html(properties: list, output_path: str = "docs/index.html") -> Non
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daft.ie — Distance to Luas &amp; DART</title>
+  <title>Daft.ie — Properties for Sale &amp; Distance to Luas/DART</title>
   <style>
     *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
     body {{ font-family: system-ui, sans-serif; background: #f4f5f7; color: #1a1a2e; }}
@@ -122,7 +122,7 @@ def generate_html(properties: list, output_path: str = "docs/index.html") -> Non
 <body>
   <header>
     <div>
-      <h1>Daft.ie &mdash; Luas &amp; DART Distance</h1>
+      <h1>Daft.ie &mdash; For Sale &bull; Luas &amp; DART Distance</h1>
       <p>{len(properties)} properties &bull; Updated {updated}</p>
     </div>
   </header>

@@ -28,7 +28,7 @@ def _to_property(listing) -> Property | None:
             return None
         lng, lat = coords[0], coords[1]
 
-        price = f"€{int(listing.price):,}/mo" if listing.price else "N/A"
+        price = f"€{int(listing.price):,}" if listing.price else "N/A"
 
         images = listing.media.images if listing.media else []
         image_url = images[0].get("size720x480", "") if images else ""
@@ -53,11 +53,11 @@ def _to_property(listing) -> Property | None:
 def fetch_properties(max_results: int = 100, section: str = "residential-for-rent") -> list[Property]:
     options = [
         LocationsOption([Location.DUBLIN_COUNTY]),
-        PriceOption(0, 99999),
+        PriceOption(0, 800000),
         SortOption(Sort.BEST_MATCH),
     ]
 
-    api = DaftSearch(SearchType.RENT)
+    api = DaftSearch(SearchType.SALE)
     listing_gen = api.search(options)
 
     properties = []
