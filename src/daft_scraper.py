@@ -26,7 +26,7 @@ def _to_property(listing) -> Property | None:
         coords = listing.point.coordinates if listing.point else None
         if not coords or len(coords) < 2:
             return None
-        lat, lng = coords[0], coords[1]
+        lng, lat = coords[0], coords[1]
 
         price = f"€{int(listing.price):,}/mo" if listing.price else "N/A"
 
@@ -58,10 +58,12 @@ def fetch_properties(max_results: int = 100, section: str = "residential-for-ren
     ]
 
     api = DaftSearch(SearchType.RENT)
-    listings = api.search(options, max_results=max_results)
+    listing_gen = api.search(options)
 
     properties = []
-    for listing in listings:
+    for listing in listing_gen:
+        if len(properties) >= max_results:
+            break
         prop = _to_property(listing)
         if prop:
             properties.append(prop)
