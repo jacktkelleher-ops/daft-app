@@ -1,1 +1,1 @@
-daft-scraper>=2.0.0
+daft-scraper>=1.4.0
