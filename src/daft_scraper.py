@@ -52,7 +52,7 @@ def _to_property(listing) -> Property | None:
 
 def fetch_properties(max_results: int = 100, section: str = "residential-for-rent") -> list[Property]:
     options = [
-        LocationsOption([Location.DUBLIN]),
+        LocationsOption([Location.DUBLIN_COUNTY]),
         PriceOption(0, 99999),
         SortOption(Sort.BEST_MATCH),
     ]
