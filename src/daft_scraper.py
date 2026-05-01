@@ -1,12 +1,10 @@
 import json
 import re
-import subprocess
-import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
 
-FETCHER = Path(__file__).parent.parent / "fetch_daft.js"
+CACHE = Path(__file__).parent.parent / "data" / "listings.json"
 
 
 @dataclass
@@ -80,15 +78,7 @@ def _parse_listing(item: dict) -> Property | None:
 
 
 def fetch_properties(max_results: int = 200) -> list[Property]:
-    result = subprocess.run(
-        ["node", str(FETCHER), str(max_results)],
-        capture_output=True, text=True, encoding="utf-8", timeout=180
-    )
-    if result.returncode != 0:
-        print(f"fetch_daft.js error: {result.stderr.strip()}", file=sys.stderr)
-        return []
-
-    raw = json.loads(result.stdout)
+    raw = json.loads(CACHE.read_text(encoding="utf-8"))
     seen = set()
     properties = []
     for item in raw:
@@ -96,4 +86,4 @@ def fetch_properties(max_results: int = 200) -> list[Property]:
         if prop and prop.id not in seen:
             seen.add(prop.id)
             properties.append(prop)
-    return properties
+    return properties[:max_results]
