@@ -1,8 +1,11 @@
+import json
+import subprocess
+import sys
 from dataclasses import dataclass, field
+from pathlib import Path
 
-from daft_scraper.search import DaftSearch, SearchType
-from daft_scraper.search.options import PriceOption, SortOption, Sort
-from daft_scraper.search.options_location import LocationsOption, Location
+
+FETCHER = Path(__file__).parent.parent / "fetch_daft.js"
 
 
 @dataclass
@@ -21,51 +24,50 @@ class Property:
     nearest_stop: dict = field(default_factory=dict)
 
 
-def _to_property(listing) -> Property | None:
+def _parse_listing(item: dict) -> Property | None:
     try:
-        coords = listing.point.coordinates if listing.point else None
-        if not coords or len(coords) < 2:
-            return None
+        listing = item.get("listing", item)
+        coords = listing.get("point", {}).get("coordinates", [None, None])
         lng, lat = coords[0], coords[1]
+        if not lat or not lng:
+            return None
 
-        price = f"€{int(listing.price):,}" if listing.price else "N/A"
+        price_val = listing.get("price", "N/A")
+        price = f"€{int(price_val):,}" if isinstance(price_val, (int, float)) else str(price_val)
 
-        images = listing.media.images if listing.media else []
+        images = listing.get("media", {}).get("images", [])
         image_url = images[0].get("size720x480", "") if images else ""
 
         return Property(
-            id=listing.id,
-            title=listing.title or "",
+            id=listing.get("id", 0),
+            title=listing.get("title", ""),
             price=price,
-            address=listing.title or "",
-            url=listing.url or "",
+            address=listing.get("seoFriendlyPath", "").replace("/", " ").strip() or listing.get("title", ""),
+            url=f"https://www.daft.ie{listing.get('seoFriendlyPath', '')}",
             lat=float(lat),
             lng=float(lng),
-            bedrooms=str(listing.numBedrooms) if listing.numBedrooms else "",
-            bathrooms=str(listing.numBathrooms) if listing.numBathrooms else "",
-            property_type=listing.propertyType or "",
+            bedrooms=str(listing.get("numBedrooms", "")) if listing.get("numBedrooms") else "",
+            bathrooms=str(listing.get("numBathrooms", "")) if listing.get("numBathrooms") else "",
+            property_type=listing.get("propertyType", ""),
             image_url=image_url,
         )
     except Exception:
         return None
 
 
-def fetch_properties(max_results: int = 100, section: str = "residential-for-rent") -> list[Property]:
-    options = [
-        LocationsOption([Location.DUBLIN_COUNTY]),
-        PriceOption(0, 800000),
-        SortOption(Sort.BEST_MATCH),
-    ]
+def fetch_properties(max_results: int = 200) -> list[Property]:
+    result = subprocess.run(
+        ["node", str(FETCHER), str(max_results)],
+        capture_output=True, text=True, timeout=180
+    )
+    if result.returncode != 0:
+        print(f"fetch_daft.js error: {result.stderr.strip()}", file=sys.stderr)
+        return []
 
-    api = DaftSearch(SearchType.SALE)
-    listing_gen = api.search(options)
-
+    raw = json.loads(result.stdout)
     properties = []
-    for listing in listing_gen:
-        if len(properties) >= max_results:
-            break
-        prop = _to_property(listing)
+    for item in raw:
+        prop = _parse_listing(item)
         if prop:
             properties.append(prop)
-
     return properties
