@@ -9,6 +9,18 @@ def generate_html(properties: list, output_path: str = "docs/index.html") -> Non
     for pt in prop_types:
         type_options += f'      <option value="{pt}">{pt}</option>\n'
 
+    def postcode_sort_key(pc):
+        if pc == "Co. Dublin":
+            return (999, "")
+        import re
+        m = re.match(r'D(\d+)(W?)', pc)
+        return (int(m.group(1)), m.group(2)) if m else (998, pc)
+
+    postcodes = sorted(set(p.postcode for p in properties if p.postcode), key=postcode_sort_key)
+    postcode_options = '<option value="all">All</option>\n'
+    for pc in postcodes:
+        postcode_options += f'      <option value="{pc}">{pc}</option>\n'
+
     cards = ""
     for p in properties:
         stop = p.nearest_stop
@@ -25,7 +37,7 @@ def generate_html(properties: list, output_path: str = "docs/index.html") -> Non
         ber_badge = f'<span class="tag ber ber-{ber_letter}">{p.ber}</span>' if p.ber else ""
 
         cards += f"""
-    <div class="card" data-dist="{dist}" data-price-val="{p.price_val}" data-beds="{p.beds_num}" data-type="{p.property_type}" data-ber="{p.ber}">
+    <div class="card" data-dist="{dist}" data-price-val="{p.price_val}" data-beds="{p.beds_num}" data-type="{p.property_type}" data-ber="{p.ber}" data-postcode="{p.postcode}">
       <a href="{p.url}" target="_blank" rel="noopener">
         <div class="card-img">{img_html}</div>
         <div class="card-body">
@@ -193,6 +205,11 @@ def generate_html(properties: list, output_path: str = "docs/index.html") -> Non
       <option value="C">C rated</option>
       <option value="D">D or below</option>
     </select>
+
+    <label for="filter-postcode">Postcode:</label>
+    <select id="filter-postcode">
+      {postcode_options}
+    </select>
   </div>
 
   <div class="legend">
@@ -219,6 +236,7 @@ def generate_html(properties: list, output_path: str = "docs/index.html") -> Non
       const propType = document.getElementById('filter-prop-type').value;
       const transport = document.getElementById('filter-type').value;
       const berFilter = document.getElementById('filter-ber').value;
+      const postcodeFilter = document.getElementById('filter-postcode').value;
 
       document.getElementById('dist-label').textContent = maxDist >= 5 ? 'any' : maxDist.toFixed(1) + ' km';
       document.getElementById('price-label').textContent = minPrice === 0 ? 'any' : '€' + (minPrice / 1000).toFixed(0) + 'k+';
@@ -238,6 +256,7 @@ def generate_html(properties: list, output_path: str = "docs/index.html") -> Non
             if (!ber.toUpperCase().startsWith(berFilter)) return false;
           }}
         }}
+        if (postcodeFilter !== 'all' && c.dataset.postcode !== postcodeFilter) return false;
         return true;
       }});
 

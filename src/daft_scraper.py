@@ -23,7 +23,23 @@ class Property:
     property_type: str = ""
     image_url: str = ""
     ber: str = ""
+    postcode: str = ""
     nearest_stop: dict = field(default_factory=dict)
+
+
+def _extract_postcode(title: str) -> str:
+    # Match full Eircode like D08AY91 or D6WAY91, extract routing key
+    m = re.search(r'\b(D0?(\d+)(W?))(?:[A-Z0-9]{4})\b', title, re.IGNORECASE)
+    if m:
+        return f"D{m.group(2)}{m.group(3).upper()}"
+    # Match standalone routing key like D08 or D6W
+    m = re.search(r'\b(D0?(\d+)(W?))\b', title, re.IGNORECASE)
+    if m:
+        return f"D{m.group(2)}{m.group(3).upper()}"
+    # Any other Eircode (A94, K67 etc.) → Co. Dublin
+    if re.search(r'\b[A-Z]\d{2}[A-Z0-9]{4}\b', title, re.IGNORECASE):
+        return "Co. Dublin"
+    return ""
 
 
 def _parse_listing(item: dict) -> Property | None:
@@ -72,6 +88,7 @@ def _parse_listing(item: dict) -> Property | None:
             property_type=listing.get("propertyType", ""),
             image_url=image_url,
             ber=ber,
+            postcode=_extract_postcode(listing.get("title", "")),
         )
     except Exception:
         return None
