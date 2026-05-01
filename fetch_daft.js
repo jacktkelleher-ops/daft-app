@@ -22,7 +22,7 @@ async function main() {
     all.push(...page);
     if (page.length < PAGE_SIZE) break;
     from += PAGE_SIZE;
-    await new Promise(r => setTimeout(r, 700));
+    await new Promise(r => setTimeout(r, 1500));
   }
   process.stdout.write(JSON.stringify(all.slice(0, MAX_RESULTS)));
 }

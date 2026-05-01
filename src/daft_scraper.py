@@ -65,9 +65,11 @@ def fetch_properties(max_results: int = 200) -> list[Property]:
         return []
 
     raw = json.loads(result.stdout)
+    seen = set()
     properties = []
     for item in raw:
         prop = _parse_listing(item)
-        if prop:
+        if prop and prop.id not in seen:
+            seen.add(prop.id)
             properties.append(prop)
     return properties
