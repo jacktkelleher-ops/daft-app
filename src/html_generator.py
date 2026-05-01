@@ -3,8 +3,13 @@ from datetime import datetime, timezone
 
 def generate_html(properties: list, output_path: str = "docs/index.html") -> None:
     updated = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    cards = ""
 
+    prop_types = sorted(set(p.property_type for p in properties if p.property_type))
+    type_options = '<option value="all">All</option>\n'
+    for pt in prop_types:
+        type_options += f'      <option value="{pt}">{pt}</option>\n'
+
+    cards = ""
     for p in properties:
         stop = p.nearest_stop
         stop_name = stop.get("name", "Unknown")
@@ -16,15 +21,17 @@ def generate_html(properties: list, output_path: str = "docs/index.html") -> Non
         beds = f'<span class="tag">{p.bedrooms} bed</span>' if p.bedrooms else ""
         baths = f'<span class="tag">{p.bathrooms} bath</span>' if p.bathrooms else ""
         prop_type = f'<span class="tag">{p.property_type}</span>' if p.property_type else ""
+        ber_letter = p.ber[0].lower() if p.ber else ""
+        ber_badge = f'<span class="tag ber ber-{ber_letter}">{p.ber}</span>' if p.ber else ""
 
         cards += f"""
-    <div class="card" data-dist="{dist}">
+    <div class="card" data-dist="{dist}" data-price-val="{p.price_val}" data-beds="{p.beds_num}" data-type="{p.property_type}" data-ber="{p.ber}">
       <a href="{p.url}" target="_blank" rel="noopener">
         <div class="card-img">{img_html}</div>
         <div class="card-body">
           <div class="price">{p.price}</div>
           <div class="address">{p.title}</div>
-          <div class="tags">{beds}{baths}{prop_type}</div>
+          <div class="tags">{beds}{baths}{prop_type}{ber_badge}</div>
           <div class="stop {stop_class}">
             <span class="stop-icon">🚉</span>
             <strong>{dist} km</strong> to {stop_name} <em>({stop_type})</em>
@@ -65,9 +72,10 @@ def generate_html(properties: list, output_path: str = "docs/index.html") -> Non
       background: #fff;
       border-bottom: 1px solid #e0e0e0;
     }}
-    .controls label {{ font-size: 0.9rem; font-weight: 500; }}
+    .controls label {{ font-size: 0.9rem; font-weight: 500; white-space: nowrap; }}
     select, input[type=range] {{ cursor: pointer; }}
-    #dist-label {{ font-weight: 600; min-width: 4rem; }}
+    .ctrl-val {{ font-weight: 600; min-width: 4rem; display: inline-block; }}
+    .ctrl-sep {{ width: 1px; height: 1.5rem; background: #e0e0e0; margin: 0 0.25rem; }}
 
     .legend {{
       display: flex;
@@ -111,6 +119,15 @@ def generate_html(properties: list, output_path: str = "docs/index.html") -> Non
     .tags {{ display: flex; gap: 0.3rem; flex-wrap: wrap; margin-top: 0.2rem; }}
     .tag {{ background: #f0f0f0; padding: 0.15rem 0.5rem; border-radius: 20px; font-size: 0.75rem; }}
 
+    .ber {{ color: #fff; font-weight: 600; }}
+    .ber-a {{ background: #00a651; }}
+    .ber-b {{ background: #50b747; }}
+    .ber-c {{ background: #bad52a; color: #333; }}
+    .ber-d {{ background: #f9c500; color: #333; }}
+    .ber-e {{ background: #f7941d; }}
+    .ber-f {{ background: #ef4123; }}
+    .ber-g {{ background: #e01a22; }}
+
     .stop {{ margin-top: auto; padding-top: 0.6rem; font-size: 0.82rem; border-top: 1px solid #f0f0f0; }}
     .stop.dart {{ color: #007a3d; }}
     .stop.luas-green {{ color: #2d7a1f; }}
@@ -128,21 +145,53 @@ def generate_html(properties: list, output_path: str = "docs/index.html") -> Non
   </header>
 
   <div class="controls">
-    <label for="sort">Sort by:</label>
+    <label for="sort">Sort:</label>
     <select id="sort">
       <option value="dist">Distance to stop</option>
       <option value="price-asc">Price (low to high)</option>
       <option value="price-desc">Price (high to low)</option>
     </select>
 
-    <label for="max-dist">Max distance: <span id="dist-label">any</span></label>
+    <div class="ctrl-sep"></div>
+
+    <label for="max-dist">Max distance: <span class="ctrl-val" id="dist-label">any</span></label>
     <input type="range" id="max-dist" min="0.1" max="5" step="0.1" value="5">
+
+    <label for="min-price">Min price: <span class="ctrl-val" id="price-label">any</span></label>
+    <input type="range" id="min-price" min="0" max="750000" step="25000" value="0">
+
+    <div class="ctrl-sep"></div>
+
+    <label for="min-beds">Min beds:</label>
+    <select id="min-beds">
+      <option value="0">Any</option>
+      <option value="1">1+</option>
+      <option value="2">2+</option>
+      <option value="3">3+</option>
+      <option value="4">4+</option>
+    </select>
+
+    <label for="filter-prop-type">Type:</label>
+    <select id="filter-prop-type">
+      {type_options}
+    </select>
+
+    <div class="ctrl-sep"></div>
 
     <label for="filter-type">Transport:</label>
     <select id="filter-type">
       <option value="all">All</option>
       <option value="DART">DART only</option>
       <option value="Luas">Luas only</option>
+    </select>
+
+    <label for="filter-ber">BER:</label>
+    <select id="filter-ber">
+      <option value="all">Any</option>
+      <option value="A">A rated</option>
+      <option value="B">B rated</option>
+      <option value="C">C rated</option>
+      <option value="D">D or below</option>
     </select>
   </div>
 
@@ -162,31 +211,39 @@ def generate_html(properties: list, output_path: str = "docs/index.html") -> Non
     const cards = Array.from(grid.querySelectorAll('.card'));
     const noResults = document.getElementById('no-results');
 
-    function parsePrice(card) {{
-      const text = card.querySelector('.price').textContent.replace(/[€,\\/mo\\s]/g, '');
-      return parseFloat(text) || 0;
-    }}
-
     function applyFilters() {{
       const sortVal = document.getElementById('sort').value;
       const maxDist = parseFloat(document.getElementById('max-dist').value);
-      const typeFilter = document.getElementById('filter-type').value;
+      const minPrice = parseInt(document.getElementById('min-price').value);
+      const minBeds = parseInt(document.getElementById('min-beds').value);
+      const propType = document.getElementById('filter-prop-type').value;
+      const transport = document.getElementById('filter-type').value;
+      const berFilter = document.getElementById('filter-ber').value;
 
       document.getElementById('dist-label').textContent = maxDist >= 5 ? 'any' : maxDist.toFixed(1) + ' km';
+      document.getElementById('price-label').textContent = minPrice === 0 ? 'any' : '€' + (minPrice / 1000).toFixed(0) + 'k+';
 
       let visible = cards.filter(c => {{
-        const dist = parseFloat(c.dataset.dist);
-        if (dist > maxDist) return false;
-        if (typeFilter !== 'all') {{
-          const stopText = c.querySelector('.stop').textContent;
-          if (!stopText.includes(typeFilter)) return false;
+        if (parseFloat(c.dataset.dist) > maxDist) return false;
+        if (minPrice > 0 && parseInt(c.dataset.priceVal || 0) < minPrice) return false;
+        if (minBeds > 0 && parseInt(c.dataset.beds || 0) < minBeds) return false;
+        if (propType !== 'all' && c.dataset.type !== propType) return false;
+        if (transport !== 'all' && !c.querySelector('.stop').textContent.includes(transport)) return false;
+        if (berFilter !== 'all') {{
+          const ber = c.dataset.ber || '';
+          if (!ber) return false;
+          if (berFilter === 'D') {{
+            if (!'DEFG'.includes(ber[0].toUpperCase())) return false;
+          }} else {{
+            if (!ber.toUpperCase().startsWith(berFilter)) return false;
+          }}
         }}
         return true;
       }});
 
       if (sortVal === 'dist') visible.sort((a, b) => parseFloat(a.dataset.dist) - parseFloat(b.dataset.dist));
-      else if (sortVal === 'price-asc') visible.sort((a, b) => parsePrice(a) - parsePrice(b));
-      else if (sortVal === 'price-desc') visible.sort((a, b) => parsePrice(b) - parsePrice(a));
+      else if (sortVal === 'price-asc') visible.sort((a, b) => parseInt(a.dataset.priceVal || 0) - parseInt(b.dataset.priceVal || 0));
+      else if (sortVal === 'price-desc') visible.sort((a, b) => parseInt(b.dataset.priceVal || 0) - parseInt(a.dataset.priceVal || 0));
 
       const visibleSet = new Set(visible);
       cards.forEach(c => {{ c.style.display = visibleSet.has(c) ? '' : 'none'; }});
@@ -196,7 +253,11 @@ def generate_html(properties: list, output_path: str = "docs/index.html") -> Non
 
     document.getElementById('sort').addEventListener('change', applyFilters);
     document.getElementById('max-dist').addEventListener('input', applyFilters);
+    document.getElementById('min-price').addEventListener('input', applyFilters);
+    document.getElementById('min-beds').addEventListener('change', applyFilters);
+    document.getElementById('filter-prop-type').addEventListener('change', applyFilters);
     document.getElementById('filter-type').addEventListener('change', applyFilters);
+    document.getElementById('filter-ber').addEventListener('change', applyFilters);
 
     applyFilters();
   </script>

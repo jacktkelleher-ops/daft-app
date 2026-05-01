@@ -30,9 +30,10 @@
       background: #fff;
       border-bottom: 1px solid #e0e0e0;
     }
-    .controls label { font-size: 0.9rem; font-weight: 500; }
+    .controls label { font-size: 0.9rem; font-weight: 500; white-space: nowrap; }
     select, input[type=range] { cursor: pointer; }
-    #dist-label { font-weight: 600; min-width: 4rem; }
+    .ctrl-val { font-weight: 600; min-width: 4rem; display: inline-block; }
+    .ctrl-sep { width: 1px; height: 1.5rem; background: #e0e0e0; margin: 0 0.25rem; }
 
     .legend {
       display: flex;
@@ -76,6 +77,15 @@
     .tags { display: flex; gap: 0.3rem; flex-wrap: wrap; margin-top: 0.2rem; }
     .tag { background: #f0f0f0; padding: 0.15rem 0.5rem; border-radius: 20px; font-size: 0.75rem; }
 
+    .ber { color: #fff; font-weight: 600; }
+    .ber-a { background: #00a651; }
+    .ber-b { background: #50b747; }
+    .ber-c { background: #bad52a; color: #333; }
+    .ber-d { background: #f9c500; color: #333; }
+    .ber-e { background: #f7941d; }
+    .ber-f { background: #ef4123; }
+    .ber-g { background: #e01a22; }
+
     .stop { margin-top: auto; padding-top: 0.6rem; font-size: 0.82rem; border-top: 1px solid #f0f0f0; }
     .stop.dart { color: #007a3d; }
     .stop.luas-green { color: #2d7a1f; }
@@ -88,26 +98,63 @@
   <header>
     <div>
       <h1>Daft.ie &mdash; For Sale &bull; Luas &amp; DART Distance</h1>
-      <p>20 properties &bull; Updated 2026-05-01 17:11 UTC</p>
+      <p>20 properties &bull; Updated 2026-05-01 18:09 UTC</p>
     </div>
   </header>
 
   <div class="controls">
-    <label for="sort">Sort by:</label>
+    <label for="sort">Sort:</label>
     <select id="sort">
       <option value="dist">Distance to stop</option>
       <option value="price-asc">Price (low to high)</option>
       <option value="price-desc">Price (high to low)</option>
     </select>
 
-    <label for="max-dist">Max distance: <span id="dist-label">any</span></label>
+    <div class="ctrl-sep"></div>
+
+    <label for="max-dist">Max distance: <span class="ctrl-val" id="dist-label">any</span></label>
     <input type="range" id="max-dist" min="0.1" max="5" step="0.1" value="5">
+
+    <label for="min-price">Min price: <span class="ctrl-val" id="price-label">any</span></label>
+    <input type="range" id="min-price" min="0" max="750000" step="25000" value="0">
+
+    <div class="ctrl-sep"></div>
+
+    <label for="min-beds">Min beds:</label>
+    <select id="min-beds">
+      <option value="0">Any</option>
+      <option value="1">1+</option>
+      <option value="2">2+</option>
+      <option value="3">3+</option>
+      <option value="4">4+</option>
+    </select>
+
+    <label for="filter-prop-type">Type:</label>
+    <select id="filter-prop-type">
+      <option value="all">All</option>
+      <option value="Apartment">Apartment</option>
+      <option value="Bungalow">Bungalow</option>
+      <option value="Semi-D">Semi-D</option>
+      <option value="Terrace">Terrace</option>
+
+    </select>
+
+    <div class="ctrl-sep"></div>
 
     <label for="filter-type">Transport:</label>
     <select id="filter-type">
       <option value="all">All</option>
       <option value="DART">DART only</option>
       <option value="Luas">Luas only</option>
+    </select>
+
+    <label for="filter-ber">BER:</label>
+    <select id="filter-ber">
+      <option value="all">Any</option>
+      <option value="A">A rated</option>
+      <option value="B">B rated</option>
+      <option value="C">C rated</option>
+      <option value="D">D or below</option>
     </select>
   </div>
 
@@ -119,13 +166,13 @@
 
   <div class="grid" id="grid">
     
-    <div class="card" data-dist="0.12">
+    <div class="card" data-dist="0.12" data-price-val="320000" data-beds="1" data-type="Apartment" data-ber="C1">
       <a href="https://www.daft.ie/for-sale/apartment-apartment-30-willbrook-house-ranelagh-co-dublin/6560721" target="_blank" rel="noopener">
         <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRod2VzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6ImFcLzlcL2E5ZDE2OTUwLWU1MTYtNGUyNC04MDk2LWZiMGU3MDk2ZTRlZi5KUEVHIn0=?signature=3db097a9ce8726b5382b54508e83e0e8549b59eb7a468f5289190bfd573d32fe" alt="" loading="lazy"></div>
         <div class="card-body">
-          <div class="price">â‚¬320,000</div>
+          <div class="price">€320,000</div>
           <div class="address">Apartment 30, Willbrook House, Ranelagh, Co. Dublin, D06HR44</div>
-          <div class="tags"><span class="tag">1 Bed bed</span><span class="tag">1 Bath bath</span><span class="tag">Apartment</span></div>
+          <div class="tags"><span class="tag">1 bed</span><span class="tag">1 Bath bath</span><span class="tag">Apartment</span><span class="tag ber ber-c">C1</span></div>
           <div class="stop luas-green">
             <span class="stop-icon">🚉</span>
             <strong>0.12 km</strong> to Ranelagh <em>(Luas Green Line)</em>
@@ -133,13 +180,13 @@
         </div>
       </a>
     </div>
-    <div class="card" data-dist="0.38">
+    <div class="card" data-dist="0.38" data-price-val="420000" data-beds="2" data-type="Terrace" data-ber="E1">
       <a href="https://www.daft.ie/for-sale/house-83-annamoe-terrace-cabra-dublin-7/6560713" target="_blank" rel="noopener">
         <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRoZWFzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6ImZcLzlcL2Y5M2RkMGU5LTliMmUtNGFmNS1hOTM2LTljN2VmYjU4MTQ3Mi5qcGcifQ==?signature=2b2b2911d156c4ed6ec6f492bbb23767954be91d0dc0f7c50f72a373919cce3b" alt="" loading="lazy"></div>
         <div class="card-body">
-          <div class="price">â‚¬420,000</div>
+          <div class="price">€420,000</div>
           <div class="address">83 Annamoe Terrace, Cabra, Dublin 7, D07T6K8</div>
-          <div class="tags"><span class="tag">2 Bed bed</span><span class="tag">1 Bath bath</span><span class="tag">Terrace</span></div>
+          <div class="tags"><span class="tag">2 bed</span><span class="tag">1 Bath bath</span><span class="tag">Terrace</span><span class="tag ber ber-e">E1</span></div>
           <div class="stop luas-green">
             <span class="stop-icon">🚉</span>
             <strong>0.38 km</strong> to Cabra <em>(Luas Green Line)</em>
@@ -147,13 +194,13 @@
         </div>
       </a>
     </div>
-    <div class="card" data-dist="0.43">
+    <div class="card" data-dist="0.43" data-price-val="750000" data-beds="2" data-type="Terrace" data-ber="B2">
       <a href="https://www.daft.ie/for-sale/house-9-brookfield-terrace-blackrock-co-dublin/6545736" target="_blank" rel="noopener">
         <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRod2VzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6IjlcLzRcLzk0ZjI0Y2FmLTAyOTQtNGE0MC05MWM0LTE5N2U0YmQwZmUyNC5qcGcifQ==?signature=05f8ad9bc657bcd6df0feb1cb25992887af8d4ffc9256a6d1e1204bc1a5ba35a" alt="" loading="lazy"></div>
         <div class="card-body">
-          <div class="price">â‚¬750,000</div>
+          <div class="price">€750,000</div>
           <div class="address">9 Brookfield Terrace, Blackrock, Co Dublin, A94K0H6</div>
-          <div class="tags"><span class="tag">2 Bed bed</span><span class="tag">2 Bath bath</span><span class="tag">Terrace</span></div>
+          <div class="tags"><span class="tag">2 bed</span><span class="tag">2 Bath bath</span><span class="tag">Terrace</span><span class="tag ber ber-b">B2</span></div>
           <div class="stop dart">
             <span class="stop-icon">🚉</span>
             <strong>0.43 km</strong> to Seapoint <em>(DART)</em>
@@ -161,13 +208,13 @@
         </div>
       </a>
     </div>
-    <div class="card" data-dist="0.55">
+    <div class="card" data-dist="0.55" data-price-val="535000" data-beds="3" data-type="Semi-D" data-ber="E2">
       <a href="https://www.daft.ie/for-sale/house-39-elm-mount-close-dublin-9-beaumont-co-dublin/6560632" target="_blank" rel="noopener">
         <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRoZWFzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6IjlcL2RcLzlkZjkxYTczLTg4ZGItNGEyOC05NmEzLWY4ZmYzODA5NDUwNi5KUEVHIn0=?signature=3ccdc1a67c409d6395f94a6b030e03351358f95070c8f29c857f3c09897b637d" alt="" loading="lazy"></div>
         <div class="card-body">
-          <div class="price">â‚¬535,000</div>
+          <div class="price">€535,000</div>
           <div class="address">39 Elm Mount Close, Dublin 9, Beaumont, Co. Dublin, D09X9C0</div>
-          <div class="tags"><span class="tag">3 Bed bed</span><span class="tag">1 Bath bath</span><span class="tag">Semi-D</span></div>
+          <div class="tags"><span class="tag">3 bed</span><span class="tag">1 Bath bath</span><span class="tag">Semi-D</span><span class="tag ber ber-e">E2</span></div>
           <div class="stop dart">
             <span class="stop-icon">🚉</span>
             <strong>0.55 km</strong> to Raheny <em>(DART)</em>
@@ -175,13 +222,13 @@
         </div>
       </a>
     </div>
-    <div class="card" data-dist="0.65">
+    <div class="card" data-dist="0.65" data-price-val="500000" data-beds="1" data-type="Apartment" data-ber="B3">
       <a href="https://www.daft.ie/for-sale/apartment-apartment-21-the-warehouse-clanbrassil-terrace-dublin-8-co-dublin/6556893" target="_blank" rel="noopener">
         <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRod2VzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6IjZcL2VcLzZlZTE5YzY0LWY4ZmUtNDQxYS04ZGY1LTg3MWE3YWY4OGY5Ny5KUEVHIn0=?signature=ea53ce7e499cd9e1bb2b0ce55c7b3935551456714a9275949b689833237507b1" alt="" loading="lazy"></div>
         <div class="card-body">
-          <div class="price">â‚¬500,000</div>
+          <div class="price">€500,000</div>
           <div class="address">Apartment 21, The Warehouse, Clanbrassil Terrace, Dublin 8, Co. Dublin, D08AY91</div>
-          <div class="tags"><span class="tag">1 Bed bed</span><span class="tag">1 Bath bath</span><span class="tag">Apartment</span></div>
+          <div class="tags"><span class="tag">1 bed</span><span class="tag">1 Bath bath</span><span class="tag">Apartment</span><span class="tag ber ber-b">B3</span></div>
           <div class="stop luas-green">
             <span class="stop-icon">🚉</span>
             <strong>0.65 km</strong> to Harcourt <em>(Luas Green Line)</em>
@@ -189,27 +236,13 @@
         </div>
       </a>
     </div>
-    <div class="card" data-dist="0.65">
-      <a href="https://www.daft.ie/for-sale/house-78-south-circular-road-dublin-8-portobello-co-dublin/6560622" target="_blank" rel="noopener">
-        <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRod2VzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6ImNcLzZcL2M2YTMyNmY3LWMwYjMtNGQ0Ny1iMzgxLWNmNDA5ZDZkOWEzZi5KUEVHIn0=?signature=d900075f09315e2a74dc3d975985806d2dd32b8b6e3a8c16160e104b68dfb880" alt="" loading="lazy"></div>
-        <div class="card-body">
-          <div class="price">â‚¬750,000</div>
-          <div class="address">78 South Circular Road, Dublin 8, Portobello, Co. Dublin, D08HKT3</div>
-          <div class="tags"><span class="tag">4 Bed bed</span><span class="tag">1 Bath bath</span><span class="tag">Terrace</span></div>
-          <div class="stop luas-green">
-            <span class="stop-icon">🚉</span>
-            <strong>0.65 km</strong> to Harcourt <em>(Luas Green Line)</em>
-          </div>
-        </div>
-      </a>
-    </div>
-    <div class="card" data-dist="0.76">
+    <div class="card" data-dist="0.76" data-price-val="2500" data-beds="2" data-type="Terrace" data-ber="D2">
       <a href="https://www.daft.ie/for-sale/house-87-ringsend-park-ringsend-dublin/6560698" target="_blank" rel="noopener">
         <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRod2VzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6ImJcL2RcL2JkZTUyNzIwLTMyOTEtNGRlMy1hMDIyLTI2MGNkNmY3MTU1OC5qcGcifQ==?signature=5a03ebd707cd458e41aaec4795b3cdfaf59026a684dd5780530aaaee0da3ae39" alt="" loading="lazy"></div>
         <div class="card-body">
-          <div class="price">â‚¬2,500</div>
+          <div class="price">€2,500</div>
           <div class="address">87 Ringsend Park, Ringsend, Dublin, D04VF86</div>
-          <div class="tags"><span class="tag">2 Bed bed</span><span class="tag">1 Bath bath</span><span class="tag">Terrace</span></div>
+          <div class="tags"><span class="tag">2 bed</span><span class="tag">1 Bath bath</span><span class="tag">Terrace</span><span class="tag ber ber-d">D2</span></div>
           <div class="stop luas-red">
             <span class="stop-icon">🚉</span>
             <strong>0.76 km</strong> to The Point <em>(Luas Red Line)</em>
@@ -217,13 +250,13 @@
         </div>
       </a>
     </div>
-    <div class="card" data-dist="0.8">
+    <div class="card" data-dist="0.8" data-price-val="335000" data-beds="2" data-type="Apartment" data-ber="C2">
       <a href="https://www.daft.ie/for-sale/property-apt-4-chamberlain-court-richmond-avenue-fairview-dublin-3/6560693" target="_blank" rel="noopener">
         <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRoZWFzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6ImNcL2VcL2NlYzQ5ZWI5LTI0ZmItNDY0Yy05N2Y2LTRhN2JkMTE5YzYwZC5qcGcifQ==?signature=80ba984f4b178e496e884cd66f06a84c2c9a16111aae4fb9c1e913cb893dfb24" alt="" loading="lazy"></div>
         <div class="card-body">
-          <div class="price">â‚¬335,000</div>
+          <div class="price">€335,000</div>
           <div class="address">Apt 4 Chamberlain Court, Richmond Avenue, Fairview, Dublin 3, D03KP23</div>
-          <div class="tags"><span class="tag">2 Bed bed</span><span class="tag">2 Bath bath</span><span class="tag">Apartment</span></div>
+          <div class="tags"><span class="tag">2 bed</span><span class="tag">2 Bath bath</span><span class="tag">Apartment</span><span class="tag ber ber-c">C2</span></div>
           <div class="stop dart">
             <span class="stop-icon">🚉</span>
             <strong>0.8 km</strong> to Clontarf Road <em>(DART)</em>
@@ -231,13 +264,13 @@
         </div>
       </a>
     </div>
-    <div class="card" data-dist="0.98">
+    <div class="card" data-dist="0.98" data-price-val="395000" data-beds="1" data-type="Bungalow" data-ber="G">
       <a href="https://www.daft.ie/for-sale/house-two-hoots-10-orchard-lane-blackrock-co-dublin/6555318" target="_blank" rel="noopener">
         <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRod2VzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6ImFcL2RcL2FkZmQwNTJmLTU3YzgtNGI2My05MjI0LTA0OGE3ZTU3N2E4NS5qcGcifQ==?signature=154965dd9df45b49b7b4b57dfc2e3fca1cece5e17d3f56d20a4f506e02061e25" alt="" loading="lazy"></div>
         <div class="card-body">
-          <div class="price">â‚¬395,000</div>
+          <div class="price">€395,000</div>
           <div class="address">Two Hoots, 10 Orchard Lane, Blackrock, Co. Dublin, A94F5T3</div>
-          <div class="tags"><span class="tag">1 Bed bed</span><span class="tag">1 Bath bath</span><span class="tag">Bungalow</span></div>
+          <div class="tags"><span class="tag">1 bed</span><span class="tag">1 Bath bath</span><span class="tag">Bungalow</span><span class="tag ber ber-g">G</span></div>
           <div class="stop dart">
             <span class="stop-icon">🚉</span>
             <strong>0.98 km</strong> to Seapoint <em>(DART)</em>
@@ -245,27 +278,13 @@
         </div>
       </a>
     </div>
-    <div class="card" data-dist="0.98">
-      <a href="https://www.daft.ie/for-sale/house-28-belmont-park-raheny-dublin-5/6560645" target="_blank" rel="noopener">
-        <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRoZWFzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6IjVcL2ZcLzVmY2JjYmI2LWM4MjktNDA2OC04YWY1LWM4MzM5NTRhZDVmZC5qcGcifQ==?signature=864ae37d4c21796dc9eb35bb899aa349c41c8b806f0eb4729d774d7cd46fb1af" alt="" loading="lazy"></div>
-        <div class="card-body">
-          <div class="price">â‚¬485,000</div>
-          <div class="address">28 Belmont Park, Raheny, Dublin 5, D05F242</div>
-          <div class="tags"><span class="tag">3 Bed bed</span><span class="tag">1 Bath bath</span><span class="tag">Terrace</span></div>
-          <div class="stop dart">
-            <span class="stop-icon">🚉</span>
-            <strong>0.98 km</strong> to Bayside <em>(DART)</em>
-          </div>
-        </div>
-      </a>
-    </div>
-    <div class="card" data-dist="1.79">
+    <div class="card" data-dist="1.79" data-price-val="450000" data-beds="2" data-type="Apartment" data-ber="B3">
       <a href="https://www.daft.ie/for-sale/property-apartment-17-le-hunt-house-brennanstown-co-dublin/6559921" target="_blank" rel="noopener">
         <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRod2VzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6ImVcL2VcL2VlOTFiNzM1LTQwYmYtNDJiYi1iNjgzLTIxMGIyODA1MjZiNy5KUEVHIn0=?signature=d6ab3c5cdb0b3c80c462b1239c71a914667ef587f84e4921d3a7af3e51400130" alt="" loading="lazy"></div>
         <div class="card-body">
-          <div class="price">â‚¬450,000</div>
+          <div class="price">€450,000</div>
           <div class="address">Apartment 17, Le Hunt House, Brennanstown, Co. Dublin, D18F384</div>
-          <div class="tags"><span class="tag">2 Bed bed</span><span class="tag">2 Bath bath</span><span class="tag">Apartment</span></div>
+          <div class="tags"><span class="tag">2 bed</span><span class="tag">2 Bath bath</span><span class="tag">Apartment</span><span class="tag ber ber-b">B3</span></div>
           <div class="stop luas-green">
             <span class="stop-icon">🚉</span>
             <strong>1.79 km</strong> to Laughanstown <em>(Luas Green Line)</em>
@@ -273,13 +292,27 @@
         </div>
       </a>
     </div>
-    <div class="card" data-dist="2.21">
+    <div class="card" data-dist="1.91" data-price-val="640000" data-beds="3" data-type="Semi-D" data-ber="D1">
+      <a href="https://www.daft.ie/for-sale/house-28-whitethorn-walk-carriglea-downs-d-n-laoghaire-dun-laoghaire-co-dublin/6560772" target="_blank" rel="noopener">
+        <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRoZWFzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6IjhcLzVcLzg1NTI1OTFkLTMxYzQtNDgxZC05YzU5LTk0YjJkMmVmYTVjMi5qcGcifQ==?signature=d223d0e5595f237715429e250ba7e4a38ac23eb318d77bce2220aeac44ef22c2" alt="" loading="lazy"></div>
+        <div class="card-body">
+          <div class="price">€640,000</div>
+          <div class="address">28 Whitethorn Walk, Carriglea Downs, Dún Laoghaire, Dun Laoghaire, Co. Dublin, A96E761</div>
+          <div class="tags"><span class="tag">3 bed</span><span class="tag">1 Bath bath</span><span class="tag">Semi-D</span><span class="tag ber ber-d">D1</span></div>
+          <div class="stop dart">
+            <span class="stop-icon">🚉</span>
+            <strong>1.91 km</strong> to Salthill & Monkstown <em>(DART)</em>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="card" data-dist="2.21" data-price-val="295000" data-beds="2" data-type="Apartment" data-ber="B3">
       <a href="https://www.daft.ie/for-sale/property-85-the-steeples-chapelizod-dublin-20/6560650" target="_blank" rel="noopener">
         <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRod2VzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6ImRcL2FcL2RhZDM5MTU4LTY1NWItNGFiMy04NWNlLWJlYjFhOTFhY2RlYS5qcGcifQ==?signature=da6d076bef3afeb56da5236f8d0788020ededb3660f5a23e6ff6a26aa7e69395" alt="" loading="lazy"></div>
         <div class="card-body">
-          <div class="price">â‚¬295,000</div>
+          <div class="price">€295,000</div>
           <div class="address">85 The Steeples, Chapelizod, Dublin 20</div>
-          <div class="tags"><span class="tag">2 Bed bed</span><span class="tag">1 Bath bath</span><span class="tag">Apartment</span></div>
+          <div class="tags"><span class="tag">2 bed</span><span class="tag">1 Bath bath</span><span class="tag">Apartment</span><span class="tag ber ber-b">B3</span></div>
           <div class="stop luas-red">
             <span class="stop-icon">🚉</span>
             <strong>2.21 km</strong> to Kylemore <em>(Luas Red Line)</em>
@@ -287,13 +320,13 @@
         </div>
       </a>
     </div>
-    <div class="card" data-dist="2.51">
+    <div class="card" data-dist="2.51" data-price-val="350000" data-beds="2" data-type="Terrace" data-ber="C1">
       <a href="https://www.daft.ie/for-sale/house-4-heath-square-mckee-avenue-finglas-co-dublin/6560695" target="_blank" rel="noopener">
         <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRod2VzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6IjFcL2JcLzFiYjE3MjM4LTE1ODItNDRkNC05NzI1LTFjNzBjMjZlMzhhOC5KUEVHIn0=?signature=ea257becf44cac5e870a3309754bbeb9877c6181595fbc9a205930c1308bc679" alt="" loading="lazy"></div>
         <div class="card-body">
-          <div class="price">â‚¬350,000</div>
+          <div class="price">€350,000</div>
           <div class="address">4 Heath Square, Mckee Avenue, Finglas, Co. Dublin, D11A365</div>
-          <div class="tags"><span class="tag">2 Bed bed</span><span class="tag">2 Bath bath</span><span class="tag">Terrace</span></div>
+          <div class="tags"><span class="tag">2 bed</span><span class="tag">2 Bath bath</span><span class="tag">Terrace</span><span class="tag ber ber-c">C1</span></div>
           <div class="stop luas-green">
             <span class="stop-icon">🚉</span>
             <strong>2.51 km</strong> to Broombridge <em>(Luas Green Line)</em>
@@ -301,13 +334,13 @@
         </div>
       </a>
     </div>
-    <div class="card" data-dist="2.74">
+    <div class="card" data-dist="2.74" data-price-val="495000" data-beds="2" data-type="Terrace" data-ber="B3">
       <a href="https://www.daft.ie/for-sale/house-23-clonmel-road-glasnevin-dublin-11/6525678" target="_blank" rel="noopener">
         <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRoZWFzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6IjBcL2RcLzBkZjIwM2U4LTI3OGUtNGNhNC04YmI4LTEzNWU2NGQ2MDEzMy5qcGcifQ==?signature=4bdbc92b10154cf398db9a94d99ffed5d6142879dfd173e27897feefa66ceec4" alt="" loading="lazy"></div>
         <div class="card-body">
-          <div class="price">â‚¬495,000</div>
+          <div class="price">€495,000</div>
           <div class="address">23 Clonmel Road, Glasnevin, Dublin 11, D11C3H7</div>
-          <div class="tags"><span class="tag">2 Bed bed</span><span class="tag">1 Bath bath</span><span class="tag">Terrace</span></div>
+          <div class="tags"><span class="tag">2 bed</span><span class="tag">1 Bath bath</span><span class="tag">Terrace</span><span class="tag ber ber-b">B3</span></div>
           <div class="stop luas-green">
             <span class="stop-icon">🚉</span>
             <strong>2.74 km</strong> to Broombridge <em>(Luas Green Line)</em>
@@ -315,13 +348,13 @@
         </div>
       </a>
     </div>
-    <div class="card" data-dist="3.46">
+    <div class="card" data-dist="3.46" data-price-val="575000" data-beds="5" data-type="Semi-D" data-ber="C3">
       <a href="https://www.daft.ie/for-sale/house-1-wheatfield-road-palmerstown-dublin-20/6560714" target="_blank" rel="noopener">
         <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRoZWFzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6ImZcL2JcL2ZiNzAzYTRmLTI0MDYtNGJhOS05MmRmLWEzNzU3NGRhNzc2Yy5qcGcifQ==?signature=e36bbc1db32f2218fe1219bf0d8d0c9348a286fb7ce78f12d0f5274081b2ab40" alt="" loading="lazy"></div>
         <div class="card-body">
-          <div class="price">â‚¬575,000</div>
+          <div class="price">€575,000</div>
           <div class="address">1 Wheatfield Road, Palmerstown, Dublin 20</div>
-          <div class="tags"><span class="tag">5 Bed bed</span><span class="tag">2 Bath bath</span><span class="tag">Semi-D</span></div>
+          <div class="tags"><span class="tag">5 bed</span><span class="tag">2 Bath bath</span><span class="tag">Semi-D</span><span class="tag ber ber-c">C3</span></div>
           <div class="stop luas-red">
             <span class="stop-icon">🚉</span>
             <strong>3.46 km</strong> to Red Cow <em>(Luas Red Line)</em>
@@ -329,13 +362,13 @@
         </div>
       </a>
     </div>
-    <div class="card" data-dist="3.59">
+    <div class="card" data-dist="3.59" data-price-val="275000" data-beds="1" data-type="Apartment" data-ber="B3">
       <a href="https://www.daft.ie/for-sale/property-41-temple-lawns-northwood-santry-dublin-9/6560680" target="_blank" rel="noopener">
         <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRoZWFzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6IjFcL2ZcLzFmMjQyY2FiLTM0MDItNDJkOS04Yjc0LTExNWZhMjdjNTQxMi5qcGcifQ==?signature=85a00493bffcfae930a66c6a1bc195210e9ced85d25647b4cadcd8ddce2aec07" alt="" loading="lazy"></div>
         <div class="card-body">
-          <div class="price">â‚¬275,000</div>
+          <div class="price">€275,000</div>
           <div class="address">41 Temple Lawns, Northwood, Santry, Dublin 9</div>
-          <div class="tags"><span class="tag">1 Bed bed</span><span class="tag">1 Bath bath</span><span class="tag">Apartment</span></div>
+          <div class="tags"><span class="tag">1 bed</span><span class="tag">1 Bath bath</span><span class="tag">Apartment</span><span class="tag ber ber-b">B3</span></div>
           <div class="stop dart">
             <span class="stop-icon">🚉</span>
             <strong>3.59 km</strong> to Raheny <em>(DART)</em>
@@ -343,13 +376,13 @@
         </div>
       </a>
     </div>
-    <div class="card" data-dist="4.36">
+    <div class="card" data-dist="4.36" data-price-val="270000" data-beds="1" data-type="Apartment" data-ber="C1">
       <a href="https://www.daft.ie/for-sale/property-apartment-23-saint-fintans-north-street-swords-co-dublin/6560673" target="_blank" rel="noopener">
         <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRoZWFzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6ImFcL2RcL2FkYzNkM2E4LWMyNjctNDQ2Ny04MzJiLWRmNDI0M2FjZDJkMy5KUEVHIn0=?signature=97d70d463a9d683e54ed1f41c60e2b3dfac01bda6b4cbe9f7e494b9776aa5c0c" alt="" loading="lazy"></div>
         <div class="card-body">
-          <div class="price">â‚¬270,000</div>
+          <div class="price">€270,000</div>
           <div class="address">Apartment 23, Saint Fintan'S, North Street, Swords, Co. Dublin, K67R522</div>
-          <div class="tags"><span class="tag">1 Bed bed</span><span class="tag">1 Bath bath</span><span class="tag">Apartment</span></div>
+          <div class="tags"><span class="tag">1 bed</span><span class="tag">1 Bath bath</span><span class="tag">Apartment</span><span class="tag ber ber-c">C1</span></div>
           <div class="stop dart">
             <span class="stop-icon">🚉</span>
             <strong>4.36 km</strong> to Malahide <em>(DART)</em>
@@ -357,13 +390,27 @@
         </div>
       </a>
     </div>
-    <div class="card" data-dist="7.97">
+    <div class="card" data-dist="4.45" data-price-val="280000" data-beds="1" data-type="Apartment" data-ber="C1">
+      <a href="https://www.daft.ie/for-sale/property-20-castlegate-park-adamstown-castle-lucan-co-dublin/6560765" target="_blank" rel="noopener">
+        <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRod2VzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6ImJcL2ZcL2JmZmVlMGUzLTdjZTgtNGY3Mi05YWU0LWI4NGY4YjZjNjZmNC5qcGcifQ==?signature=8ef12b21ffb1d560123e7dd5371acb4806d826a257f78169c694466b6b9abab5" alt="" loading="lazy"></div>
+        <div class="card-body">
+          <div class="price">€280,000</div>
+          <div class="address">20 Castlegate Park, Adamstown Castle, Lucan, Co. Dublin, K78R487</div>
+          <div class="tags"><span class="tag">1 bed</span><span class="tag">1 Bath bath</span><span class="tag">Apartment</span><span class="tag ber ber-c">C1</span></div>
+          <div class="stop luas-red">
+            <span class="stop-icon">🚉</span>
+            <strong>4.45 km</strong> to Citywest Campus <em>(Luas Red Line)</em>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="card" data-dist="7.97" data-price-val="385000" data-beds="3" data-type="Terrace" data-ber="C3">
       <a href="https://www.daft.ie/for-sale/house-21-the-drive-orlynn-park-lusk-co-dublin/6550134" target="_blank" rel="noopener">
         <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRod2VzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6ImVcLzVcL2U1MTJmMTJjLTMxNmQtNDlhMy04YmMxLTRjZTBmODNkODBhNC5qcGcifQ==?signature=c4d2b290e4fb2f2008a0ed4f3f32bf46b83cb9e82580a994f24d29e8378ffa80" alt="" loading="lazy"></div>
         <div class="card-body">
-          <div class="price">â‚¬385,000</div>
+          <div class="price">€385,000</div>
           <div class="address">21 The Drive, Orlynn Park, Lusk, Co. Dublin, K45X470</div>
-          <div class="tags"><span class="tag">3 Bed bed</span><span class="tag">1 Bath bath</span><span class="tag">Terrace</span></div>
+          <div class="tags"><span class="tag">3 bed</span><span class="tag">1 Bath bath</span><span class="tag">Terrace</span><span class="tag ber ber-c">C3</span></div>
           <div class="stop dart">
             <span class="stop-icon">🚉</span>
             <strong>7.97 km</strong> to Malahide <em>(DART)</em>
@@ -371,13 +418,13 @@
         </div>
       </a>
     </div>
-    <div class="card" data-dist="9.83">
+    <div class="card" data-dist="9.83" data-price-val="485000" data-beds="4" data-type="Semi-D" data-ber="C1">
       <a href="https://www.daft.ie/for-sale/house-68-palmer-avenue-rush-co-dublin/6555409" target="_blank" rel="noopener">
         <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRoZWFzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6ImFcLzFcL2ExZDcwNzc3LWRkMWUtNDJmMy05YWM2LWU3NTRiYzI4YjU4NC5qcGcifQ==?signature=0aba6750138eba33e490666be30cbb0bf1eb8fd952ca6e5d1268bfa83af4c14d" alt="" loading="lazy"></div>
         <div class="card-body">
-          <div class="price">â‚¬485,000</div>
+          <div class="price">€485,000</div>
           <div class="address">68 Palmer Avenue, Rush, Co. Dublin, K56CF75</div>
-          <div class="tags"><span class="tag">4 Bed bed</span><span class="tag">3 Bath bath</span><span class="tag">Semi-D</span></div>
+          <div class="tags"><span class="tag">4 bed</span><span class="tag">3 Bath bath</span><span class="tag">Semi-D</span><span class="tag ber ber-c">C1</span></div>
           <div class="stop dart">
             <span class="stop-icon">🚉</span>
             <strong>9.83 km</strong> to Malahide <em>(DART)</em>
@@ -385,13 +432,13 @@
         </div>
       </a>
     </div>
-    <div class="card" data-dist="10.05">
+    <div class="card" data-dist="10.05" data-price-val="325000" data-beds="2" data-type="Terrace" data-ber="C1">
       <a href="https://www.daft.ie/for-sale/house-67-linnetfields-walk-clonee-dublin-15/6546128" target="_blank" rel="noopener">
         <div class="card-img"><img src="https://media.daft.ie/eyJidWNrZXQiOiJtZWRpYW1hc3Rlci1zM2V1IiwiZWRpdHMiOnsib3ZlcmxheVdpdGgiOnsiYnVja2V0IjoibWVkaWFtYXN0ZXItczNldSIsIm9wdGlvbnMiOnsiZ3Jhdml0eSI6InNvdXRod2VzdCJ9LCJrZXkiOiJ3YXRlcm1hcmstZGFmdC1sb2dvLXNtYWxsMi12NC5wbmcifSwicmVzaXplIjp7ImZpdCI6ImNvdmVyIiwid2lkdGgiOjcyMCwiaGVpZ2h0Ijo0ODB9fSwib3V0cHV0Rm9ybWF0IjoianBlZyIsImtleSI6ImNcL2RcL2NkZjc4NjgwLTI3OTYtNGUxMy1hMWZlLWZjOWJiODc5YTM0NS5qcGcifQ==?signature=a03914cbe8dd420bb482cfe1ae9839385f39034f9402384366cba6f55425aa17" alt="" loading="lazy"></div>
         <div class="card-body">
-          <div class="price">â‚¬325,000</div>
+          <div class="price">€325,000</div>
           <div class="address">67 Linnetfields Walk, Clonee, Dublin 15, D15P7X0</div>
-          <div class="tags"><span class="tag">2 Bed bed</span><span class="tag">1 Bath bath</span><span class="tag">Terrace</span></div>
+          <div class="tags"><span class="tag">2 bed</span><span class="tag">1 Bath bath</span><span class="tag">Terrace</span><span class="tag ber ber-c">C1</span></div>
           <div class="stop luas-green">
             <span class="stop-icon">🚉</span>
             <strong>10.05 km</strong> to Broombridge <em>(Luas Green Line)</em>
@@ -407,31 +454,39 @@
     const cards = Array.from(grid.querySelectorAll('.card'));
     const noResults = document.getElementById('no-results');
 
-    function parsePrice(card) {
-      const text = card.querySelector('.price').textContent.replace(/[€,\/mo\s]/g, '');
-      return parseFloat(text) || 0;
-    }
-
     function applyFilters() {
       const sortVal = document.getElementById('sort').value;
       const maxDist = parseFloat(document.getElementById('max-dist').value);
-      const typeFilter = document.getElementById('filter-type').value;
+      const minPrice = parseInt(document.getElementById('min-price').value);
+      const minBeds = parseInt(document.getElementById('min-beds').value);
+      const propType = document.getElementById('filter-prop-type').value;
+      const transport = document.getElementById('filter-type').value;
+      const berFilter = document.getElementById('filter-ber').value;
 
       document.getElementById('dist-label').textContent = maxDist >= 5 ? 'any' : maxDist.toFixed(1) + ' km';
+      document.getElementById('price-label').textContent = minPrice === 0 ? 'any' : '€' + (minPrice / 1000).toFixed(0) + 'k+';
 
       let visible = cards.filter(c => {
-        const dist = parseFloat(c.dataset.dist);
-        if (dist > maxDist) return false;
-        if (typeFilter !== 'all') {
-          const stopText = c.querySelector('.stop').textContent;
-          if (!stopText.includes(typeFilter)) return false;
+        if (parseFloat(c.dataset.dist) > maxDist) return false;
+        if (minPrice > 0 && parseInt(c.dataset.priceVal || 0) < minPrice) return false;
+        if (minBeds > 0 && parseInt(c.dataset.beds || 0) < minBeds) return false;
+        if (propType !== 'all' && c.dataset.type !== propType) return false;
+        if (transport !== 'all' && !c.querySelector('.stop').textContent.includes(transport)) return false;
+        if (berFilter !== 'all') {
+          const ber = c.dataset.ber || '';
+          if (!ber) return false;
+          if (berFilter === 'D') {
+            if (!'DEFG'.includes(ber[0].toUpperCase())) return false;
+          } else {
+            if (!ber.toUpperCase().startsWith(berFilter)) return false;
+          }
         }
         return true;
       });
 
       if (sortVal === 'dist') visible.sort((a, b) => parseFloat(a.dataset.dist) - parseFloat(b.dataset.dist));
-      else if (sortVal === 'price-asc') visible.sort((a, b) => parsePrice(a) - parsePrice(b));
-      else if (sortVal === 'price-desc') visible.sort((a, b) => parsePrice(b) - parsePrice(a));
+      else if (sortVal === 'price-asc') visible.sort((a, b) => parseInt(a.dataset.priceVal || 0) - parseInt(b.dataset.priceVal || 0));
+      else if (sortVal === 'price-desc') visible.sort((a, b) => parseInt(b.dataset.priceVal || 0) - parseInt(a.dataset.priceVal || 0));
 
       const visibleSet = new Set(visible);
       cards.forEach(c => { c.style.display = visibleSet.has(c) ? '' : 'none'; });
@@ -441,7 +496,11 @@
 
     document.getElementById('sort').addEventListener('change', applyFilters);
     document.getElementById('max-dist').addEventListener('input', applyFilters);
+    document.getElementById('min-price').addEventListener('input', applyFilters);
+    document.getElementById('min-beds').addEventListener('change', applyFilters);
+    document.getElementById('filter-prop-type').addEventListener('change', applyFilters);
     document.getElementById('filter-type').addEventListener('change', applyFilters);
+    document.getElementById('filter-ber').addEventListener('change', applyFilters);
 
     applyFilters();
   </script>
