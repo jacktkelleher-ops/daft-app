@@ -58,7 +58,7 @@ def _parse_listing(item: dict) -> Property | None:
 def fetch_properties(max_results: int = 200) -> list[Property]:
     result = subprocess.run(
         ["node", str(FETCHER), str(max_results)],
-        capture_output=True, text=True, timeout=180
+        capture_output=True, text=True, encoding="utf-8", timeout=180
     )
     if result.returncode != 0:
         print(f"fetch_daft.js error: {result.stderr.strip()}", file=sys.stderr)
